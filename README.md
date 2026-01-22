@@ -19,6 +19,19 @@ OS-level sandboxing tool for enforcing filesystem and network restrictions on ar
 
 ## Installation
 
+### Quick Install
+
+Install the latest release with a single command:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/wangyedev/sandbox-runtime-rs/main/install.sh | sh
+```
+
+This will:
+- Auto-detect your OS (Linux/macOS) and architecture (x86_64/arm64)
+- Download the latest release from GitHub
+- Install to `/usr/local/bin` (or `~/.local/bin` if sudo is unavailable)
+
 ### Building from Source
 
 ```bash
