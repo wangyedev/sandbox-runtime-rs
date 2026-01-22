@@ -471,6 +471,10 @@ cargo test -- --nocapture
 - Async runtime is `tokio`
 - Error handling uses `thiserror` and `anyhow`
 
+## Acknowledgments
+
+This project is a Rust port of [sandbox-runtime](https://github.com/anthropic-experimental/sandbox-runtime), the original TypeScript implementation by Anthropic. The core architecture, sandboxing approach, and configuration schema are derived from that project.
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
