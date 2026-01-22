@@ -2,7 +2,7 @@
 name = "sandbox-runtime"
 version = "0.1.0"
 edition = "2021"
-authors = ["Anthropic"]
+authors = ["wangyeux@gmail.com"]
 description = "OS-level sandboxing tool for enforcing filesystem and network restrictions"
 license = "MIT"
 

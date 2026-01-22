@@ -23,7 +23,7 @@ OS-level sandboxing tool for enforcing filesystem and network restrictions on ar
 
 ```bash
 # Clone the repository
-git clone https://github.com/anthropics/sandbox-runtime-rs.git
+git clone https://github.com/wangyedev/sandbox-runtime-rs.git
 cd sandbox-runtime-rs
 
 # Build in release mode
