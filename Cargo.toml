@@ -5,6 +5,10 @@ edition = "2021"
 authors = ["wangyeux@gmail.com"]
 description = "OS-level sandboxing tool for enforcing filesystem and network restrictions"
 license = "MIT"
+repository = "https://github.com/wangyedev/sandbox-runtime-rs"
+readme = "README.md"
+keywords = ["sandbox", "security", "isolation", "macos", "linux"]
+categories = ["command-line-utilities", "development-tools"]
 
 [[bin]]
 name = "srt"

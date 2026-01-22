@@ -83,3 +83,14 @@ jobs:
           files: |
             srt-${{ matrix.asset_suffix }}.tar.gz
             srt-${{ matrix.asset_suffix }}.tar.gz.sha256
+
+  publish:
+    name: Publish to crates.io
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
