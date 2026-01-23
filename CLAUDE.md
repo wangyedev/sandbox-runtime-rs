@@ -2,6 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Upstream Reference
+
+This project is a **Rust implementation** of [sandbox-runtime](https://github.com/anthropic-experimental/sandbox-runtime), the original TypeScript implementation by Anthropic.
+
+**Key points:**
+- The architecture, configuration schema, and sandboxing approach mirror the upstream project
+- When implementing new features or fixing bugs, consult the upstream repository for design intent
+- Configuration JSON format (`~/.srt-settings.json`) is designed to be compatible with the upstream schema
+- Mandatory deny paths, domain filtering logic, and platform-specific sandboxing follow upstream behavior
+
+**When making changes:**
+1. Check if the feature/fix exists in the upstream TypeScript implementation
+2. Align behavior with upstream unless there's a Rust-specific reason to diverge
+3. Document any intentional deviations from upstream in code comments
+
 ## Build & Test Commands
 
 ```bash
