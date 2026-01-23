@@ -1,6 +1,6 @@
 [package]
 name = "sandbox-runtime"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["wangyeux@gmail.com"]
 description = "OS-level sandboxing tool for enforcing filesystem and network restrictions"
@@ -9,6 +9,7 @@ repository = "https://github.com/wangyedev/sandbox-runtime-rs"
 readme = "README.md"
 keywords = ["sandbox", "security", "isolation", "macos", "linux"]
 categories = ["command-line-utilities", "development-tools"]
+exclude = [".upstream-cache/", ".upstream-sync/"]
 
 [[bin]]
 name = "srt"
