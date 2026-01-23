@@ -147,7 +147,7 @@ pub fn get_bpf_path(config: Option<&SeccompConfig>) -> Result<PathBuf, SandboxEr
 
     // Check cache first
     {
-        let cache = BPF_PATH_CACHE.lock().unwrap();
+        let cache = BPF_PATH_CACHE.lock().unwrap_or_else(|e| e.into_inner());
         if let Some(cached) = cache.get(&cache_key) {
             return cached.clone().ok_or_else(|| {
                 SandboxError::Seccomp(format!(
@@ -161,7 +161,7 @@ pub fn get_bpf_path(config: Option<&SeccompConfig>) -> Result<PathBuf, SandboxEr
     // Find path and cache result
     let result = find_bpf_path(explicit_path);
     {
-        let mut cache = BPF_PATH_CACHE.lock().unwrap();
+        let mut cache = BPF_PATH_CACHE.lock().unwrap_or_else(|e| e.into_inner());
         cache.insert(cache_key, result.clone());
     }
 
@@ -181,7 +181,7 @@ pub fn get_apply_seccomp_path(config: Option<&SeccompConfig>) -> Result<PathBuf,
 
     // Check cache first
     {
-        let cache = APPLY_SECCOMP_PATH_CACHE.lock().unwrap();
+        let cache = APPLY_SECCOMP_PATH_CACHE.lock().unwrap_or_else(|e| e.into_inner());
         if let Some(cached) = cache.get(&cache_key) {
             return cached.clone().ok_or_else(|| {
                 SandboxError::Seccomp(format!(
@@ -195,7 +195,7 @@ pub fn get_apply_seccomp_path(config: Option<&SeccompConfig>) -> Result<PathBuf,
     // Find path and cache result
     let result = find_apply_seccomp_path(explicit_path);
     {
-        let mut cache = APPLY_SECCOMP_PATH_CACHE.lock().unwrap();
+        let mut cache = APPLY_SECCOMP_PATH_CACHE.lock().unwrap_or_else(|e| e.into_inner());
         cache.insert(cache_key, result.clone());
     }
 

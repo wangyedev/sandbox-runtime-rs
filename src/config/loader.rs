@@ -55,7 +55,13 @@ pub fn load_config_from_string(content: &str) -> Option<SandboxRuntimeConfig> {
         return None;
     }
 
-    parse_config(trimmed).ok()
+    match parse_config(trimmed) {
+        Ok(config) => Some(config),
+        Err(e) => {
+            tracing::debug!("Failed to parse config from string: {}", e);
+            None
+        }
+    }
 }
 
 #[cfg(test)]
@@ -114,5 +120,37 @@ mod tests {
 
         let result = parse_config(json);
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_load_config_from_string_valid() {
+        let json = r#"{"network": {"allowedDomains": ["github.com"]}}"#;
+        let config = load_config_from_string(json);
+        assert!(config.is_some());
+        let config = config.unwrap();
+        assert_eq!(config.network.allowed_domains.len(), 1);
+        assert_eq!(config.network.allowed_domains[0], "github.com");
+    }
+
+    #[test]
+    fn test_load_config_from_string_empty() {
+        assert!(load_config_from_string("").is_none());
+        assert!(load_config_from_string("   ").is_none());
+        assert!(load_config_from_string("\n\t").is_none());
+    }
+
+    #[test]
+    fn test_load_config_from_string_invalid_json() {
+        assert!(load_config_from_string("not json").is_none());
+        assert!(load_config_from_string("{invalid}").is_none());
+        assert!(load_config_from_string("{\"network\": }").is_none());
+    }
+
+    #[test]
+    fn test_load_config_from_string_with_whitespace() {
+        let json = r#"   {"network": {"allowedDomains": ["example.com"]}}   "#;
+        let config = load_config_from_string(json);
+        assert!(config.is_some());
+        assert_eq!(config.unwrap().network.allowed_domains[0], "example.com");
     }
 }

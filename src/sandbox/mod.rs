@@ -86,7 +86,8 @@ pub fn check_linux_dependencies(
 /// Returns a structured result with errors and warnings.
 pub fn check_dependencies_detailed(
     platform: Platform,
-    #[allow(unused_variables)] seccomp_config: Option<&crate::config::SeccompConfig>,
+    #[cfg_attr(not(target_os = "linux"), allow(unused_variables))]
+    seccomp_config: Option<&crate::config::SeccompConfig>,
 ) -> SandboxDependencyCheck {
     match platform {
         Platform::MacOS => {
