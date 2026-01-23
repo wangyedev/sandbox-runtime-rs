@@ -22,6 +22,10 @@ pub struct Cli {
     #[arg(short = 'c')]
     pub command: Option<String>,
 
+    /// Read config updates from file descriptor (JSON lines protocol)
+    #[arg(long = "control-fd")]
+    pub control_fd: Option<i32>,
+
     /// Command and arguments to run
     #[arg(trailing_var_arg = true)]
     pub args: Vec<String>,

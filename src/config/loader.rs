@@ -46,6 +46,18 @@ pub fn parse_config(json: &str) -> Result<SandboxRuntimeConfig, SandboxError> {
     Ok(config)
 }
 
+/// Load and validate sandbox configuration from a string.
+/// Used for parsing config from control fd (JSON lines protocol).
+/// Returns None if the string is empty, invalid JSON, or fails validation.
+pub fn load_config_from_string(content: &str) -> Option<SandboxRuntimeConfig> {
+    let trimmed = content.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    parse_config(trimmed).ok()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -107,6 +107,7 @@ Options:
   -d, --debug              Enable debug logging
   -s, --settings <PATH>    Path to settings file (default: ~/.srt-settings.json)
   -c <COMMAND>             Run command string directly (sh -c mode)
+  --control-fd <FD>        Read config updates from file descriptor (JSON lines protocol)
   -h, --help               Print help
   -V, --version            Print version
 
@@ -182,12 +183,22 @@ Configuration is loaded from `~/.srt-settings.json` by default. Use the `-s` fla
 |--------|------|-------------|
 | `allowedDomains` | `string[]` | Domains allowed for network access. Supports wildcards (`*.example.com`). |
 | `deniedDomains` | `string[]` | Domains explicitly denied. Takes precedence over `allowedDomains`. |
-| `allowUnixSockets` | `string[]` | Specific Unix socket paths to allow (macOS only). |
-| `allowAllUnixSockets` | `boolean` | Allow all Unix sockets (Linux only). Default: `false`. |
 | `allowLocalBinding` | `boolean` | Allow binding to localhost ports. Default: `false`. |
 | `httpProxyPort` | `number` | External HTTP proxy port (if using external proxy). |
 | `socksProxyPort` | `number` | External SOCKS5 proxy port (if using external proxy). |
 | `mitmProxy` | `object` | MITM proxy configuration for traffic inspection. |
+
+**Unix Socket Settings** (platform-specific behavior):
+
+| Setting | macOS | Linux |
+|---------|-------|-------|
+| `allowUnixSockets: string[]` | Allowlist of socket paths | *Ignored* (seccomp can't filter by path) |
+| `allowAllUnixSockets: boolean` | Allow all sockets | Disable seccomp blocking |
+
+Unix sockets are **blocked by default** on both platforms.
+
+- **macOS**: Use `allowUnixSockets` to allow specific paths (e.g., `["/var/run/docker.sock"]`), or `allowAllUnixSockets: true` to allow all.
+- **Linux**: Blocking uses seccomp filters (x64/arm64 only). If seccomp isn't available, sockets are unrestricted and a warning is shown. Use `allowAllUnixSockets: true` to explicitly disable blocking.
 
 #### Filesystem Configuration (`filesystem`)
 

@@ -1,9 +1,13 @@
 //! CLI entry point for the sandbox runtime (srt).
 
+use std::os::unix::io::FromRawFd;
 use std::process::ExitCode;
+use std::sync::Arc;
+
+use tokio::io::{AsyncBufReadExt, BufReader};
 
 use sandbox_runtime::cli::Cli;
-use sandbox_runtime::config::{load_config, load_default_config};
+use sandbox_runtime::config::{load_config, load_config_from_string, load_default_config};
 use sandbox_runtime::manager::SandboxManager;
 use sandbox_runtime::utils::init_debug_logging;
 
@@ -42,10 +46,36 @@ async fn main() -> ExitCode {
     };
 
     // Initialize sandbox manager
-    let manager = SandboxManager::new();
+    let manager = Arc::new(SandboxManager::new());
     if let Err(e) = manager.initialize(config).await {
         eprintln!("Failed to initialize sandbox: {}", e);
         return ExitCode::from(1);
+    }
+
+    // Set up control fd for dynamic config updates if specified
+    if let Some(fd) = cli.control_fd {
+        let manager_clone = Arc::clone(&manager);
+        tokio::spawn(async move {
+            // Safety: We trust the user-provided fd is valid
+            let file = unsafe { std::fs::File::from_raw_fd(fd) };
+            let async_file = tokio::fs::File::from_std(file);
+            let reader = BufReader::new(async_file);
+            let mut lines = reader.lines();
+
+            tracing::debug!("Listening for config updates on fd {}", fd);
+
+            while let Ok(Some(line)) = lines.next_line().await {
+                if let Some(new_config) = load_config_from_string(&line) {
+                    tracing::debug!("Config updated from control fd: {:?}", new_config);
+                    if let Err(e) = manager_clone.update_config(new_config) {
+                        tracing::warn!("Failed to apply config update: {}", e);
+                    }
+                } else if !line.trim().is_empty() {
+                    // Only log non-empty lines that failed to parse
+                    tracing::debug!("Invalid config on control fd (ignored): {}", line);
+                }
+            }
+        });
     }
 
     // Wrap and execute the command

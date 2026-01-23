@@ -26,11 +26,14 @@ pub struct NetworkConfig {
     #[serde(default)]
     pub denied_domains: Vec<String>,
 
-    /// Specific Unix sockets to allow (macOS only).
+    /// macOS only: Unix socket paths to allow.
+    /// Ignored on Linux (seccomp cannot filter by path).
     #[serde(default)]
     pub allow_unix_sockets: Option<Vec<String>>,
 
-    /// Allow all Unix sockets (Linux only).
+    /// If true, allow all Unix sockets (disables blocking on both platforms).
+    /// On macOS: allows all socket paths.
+    /// On Linux: disables seccomp blocking (sockets are blocked by default).
     #[serde(default)]
     pub allow_all_unix_sockets: Option<bool>,
 
